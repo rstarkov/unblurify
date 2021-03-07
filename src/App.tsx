@@ -1,26 +1,31 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import WindowEventNotifier from './WindowEventNotifier';
+import UnImage from "./UnImage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface AppState {
+  zoom: number;
+  imageUrl: string;
 }
 
-export default App;
+export default class App extends React.Component<{}, AppState> {
+  private notifyTimeout: any;
+
+  constructor(props: {}) {
+    super(props);
+    this.state = { zoom: 1, imageUrl: window.location.hash.substring(1), };
+  }
+
+  render() {
+    return (
+      <div className='AppContainer'>
+        <WindowEventNotifier event='hashchange' onEvent={this.handleHashChange} />
+        <UnImage url={this.state.imageUrl} zoom={this.state.zoom} />
+      </div >
+    );
+  }
+
+  handleHashChange = (e: HashChangeEvent) => {
+    this.setState({ imageUrl: new URL(e.newURL).hash.substring(1) });
+  }
+}
