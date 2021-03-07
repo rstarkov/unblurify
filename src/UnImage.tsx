@@ -12,26 +12,31 @@ interface UnImageState {
 export default class UnImage extends React.Component<UnImageProps, UnImageState>
 {
     private imgRef: React.RefObject<HTMLImageElement>;
+    private loadTimerId: any;
 
     constructor(props: UnImageProps) {
         super(props);
         this.imgRef = React.createRef();
         this.state = { loaded: false };
+        this.loadTimerId = setInterval(this.handleLoadTimer, 10);
     }
 
     render() {
         return (
             <div style={{ padding: 10, margin: 'auto' }}>
                 <WindowEventNotifier event='resize' onEvent={this.updateImageSize} />
-                <img ref={this.imgRef} src={this.props.url} onLoad={this.handleOnLoad} alt=""
-                    style={{ display: 'block', opacity: this.state.loaded ? 1 : 0, imageRendering: this.props.zoom === 1 ? 'auto' : 'pixelated' }} />
+                <img ref={this.imgRef} src={this.props.url} onLoad={this.handleImageLoaded} alt=""
+                    style={{ display: 'block', opacity: this.state.loaded ? 1 : 0.6, imageRendering: this.props.zoom === 1 ? 'auto' : 'pixelated' }} />
             </div>
         );
     }
 
     componentDidUpdate(prevProps: UnImageProps) {
-        if (prevProps.url != this.props.url)
+        if (prevProps.url !== this.props.url) {
             this.setState({ loaded: false });
+            clearInterval(this.loadTimerId);
+            this.loadTimerId = setInterval(this.handleLoadTimer, 10);
+        }
         this.updateImageSize();
     }
 
@@ -45,8 +50,15 @@ export default class UnImage extends React.Component<UnImageProps, UnImageState>
         el.style.height = imageHeight + 'px';
     }
 
-    handleOnLoad = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        this.updateImageSize();
+    handleImageLoaded = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
         this.setState({ loaded: true });
+    }
+
+    handleLoadTimer = () => {
+        const el = this.imgRef.current;
+        if (el === null || !el.naturalWidth)
+            return;
+        clearInterval(this.loadTimerId);
+        this.updateImageSize();
     }
 }
