@@ -9,8 +9,8 @@ interface UnImageState {
     loadState: 'loading' | 'failed' | 'knownSize' | 'done';
 }
 
-export default class UnImage extends React.Component<UnImageProps, UnImageState>
-{
+export default class UnImage extends React.Component<UnImageProps, UnImageState> {
+
     private imgRef: React.RefObject<HTMLImageElement>;
     private loadTimerId: any;
 

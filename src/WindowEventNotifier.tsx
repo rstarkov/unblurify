@@ -19,7 +19,6 @@ export default class WindowEventNotifier<K extends keyof WindowEventMap> extends
 
     handleClick = (e: any) => {
         e.stopImmediatePropagation();
-        console.log(e);
         if (!!this.props.onEvent)
             this.props.onEvent(e);
     }

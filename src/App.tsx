@@ -9,7 +9,6 @@ interface AppState {
 }
 
 export default class App extends React.Component<{}, AppState> {
-  private notifyTimeout: any;
 
   constructor(props: {}) {
     super(props);
@@ -20,6 +19,7 @@ export default class App extends React.Component<{}, AppState> {
     return (
       <div className='AppContainer'>
         <WindowEventNotifier event='hashchange' onEvent={this.handleHashChange} />
+        <WindowEventNotifier event='keydown' onEvent={this.handleKeyDown} />
         <UnImage url={this.state.imageUrl} zoom={this.state.zoom} />
       </div >
     );
@@ -27,5 +27,12 @@ export default class App extends React.Component<{}, AppState> {
 
   handleHashChange = (e: HashChangeEvent) => {
     this.setState({ imageUrl: new URL(e.newURL).hash.substring(1) });
+  }
+
+  handleKeyDown = (e: KeyboardEvent) => {
+    if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey)
+      return;
+    if (e.key >= '1' && e.key <= '9' && e.key.length === 1)
+      this.setState({ zoom: parseInt(e.key) });
   }
 }
