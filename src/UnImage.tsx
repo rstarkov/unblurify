@@ -6,7 +6,7 @@ interface UnImageProps {
     zoom: number;
 }
 interface UnImageState {
-    loaded: boolean;
+    loadState: 'loading' | 'failed' | 'knownSize' | 'done';
 }
 
 export default class UnImage extends React.Component<UnImageProps, UnImageState>
@@ -17,23 +17,30 @@ export default class UnImage extends React.Component<UnImageProps, UnImageState>
     constructor(props: UnImageProps) {
         super(props);
         this.imgRef = React.createRef();
-        this.state = { loaded: false };
+        this.state = { loadState: 'loading' };
         this.loadTimerId = setInterval(this.handleLoadTimer, 10);
     }
 
     render() {
+
         return (
             <div style={{ padding: 10, margin: 'auto' }}>
                 <WindowEventNotifier event='resize' onEvent={this.updateImageSize} />
-                <img ref={this.imgRef} src={this.props.url} onLoad={this.handleImageLoaded} alt=""
-                    style={{ display: 'block', opacity: this.state.loaded ? 1 : 0.6, imageRendering: this.props.zoom === 1 ? 'auto' : 'pixelated' }} />
+                <img ref={this.imgRef} src={this.props.url} onLoad={this.handleImageLoaded} onError={this.handleImageError} alt=""
+                    style={{
+                        display: 'block',
+                        imageRendering: this.props.zoom === 1 ? 'auto' : 'pixelated',
+                        opacity: this.state.loadState === 'loading' ? 0 : 1,
+                        maxWidth: this.state.loadState === 'loading' ? '1px' : 'none',
+                        maxHeight: this.state.loadState === 'loading' ? '1px' : 'none',
+                    }} />
             </div>
         );
     }
 
     componentDidUpdate(prevProps: UnImageProps) {
         if (prevProps.url !== this.props.url) {
-            this.setState({ loaded: false });
+            this.setState({ loadState: 'loading' });
             clearInterval(this.loadTimerId);
             this.loadTimerId = setInterval(this.handleLoadTimer, 10);
         }
@@ -51,7 +58,11 @@ export default class UnImage extends React.Component<UnImageProps, UnImageState>
     }
 
     handleImageLoaded = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        this.setState({ loaded: true });
+        this.setState({ loadState: 'done' });
+    }
+
+    handleImageError = () => {
+        this.setState({ loadState: 'failed' });
     }
 
     handleLoadTimer = () => {
@@ -60,5 +71,6 @@ export default class UnImage extends React.Component<UnImageProps, UnImageState>
             return;
         clearInterval(this.loadTimerId);
         this.updateImageSize();
+        this.setState({ loadState: el.complete ? 'done' : 'knownSize' });
     }
 }
