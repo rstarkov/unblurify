@@ -34,5 +34,7 @@ export default class App extends React.Component<{}, AppState> {
       return;
     if (e.key >= '1' && e.key <= '9' && e.key.length === 1)
       this.setState({ zoom: parseInt(e.key) });
+    else if (e.key === 'f' || e.key === "Enter")
+      document.body.requestFullscreen();
   }
 }
