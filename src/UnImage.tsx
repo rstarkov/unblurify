@@ -1,4 +1,5 @@
 import React from 'react';
+import './UnImage.css';
 import WindowEventNotifier from './WindowEventNotifier';
 
 interface UnImageProps {
@@ -27,9 +28,9 @@ export default class UnImage extends React.Component<UnImageProps, UnImageState>
             <div style={{ padding: 10, margin: 'auto' }}>
                 <WindowEventNotifier event='resize' onEvent={this.updateImageSize} />
                 <img ref={this.imgRef} src={this.props.url} onLoad={this.handleImageLoaded} onError={this.handleImageError} alt=""
+                    className={this.props.zoom === 1 ? '' : 'UnImagePixelated'}
                     style={{
                         display: 'block',
-                        imageRendering: this.props.zoom === 1 ? 'auto' : 'pixelated',
                         opacity: this.state.loadState === 'loading' ? 0 : 1,
                         maxWidth: this.state.loadState === 'loading' ? '1px' : 'none',
                         maxHeight: this.state.loadState === 'loading' ? '1px' : 'none',

@@ -1,0 +1,5 @@
+.UnImagePixelated {
+    /* Firefox/Chrome disagree on these so we have to set them via CSS in this exact order */
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
