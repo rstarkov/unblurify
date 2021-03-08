@@ -1,0 +1,16 @@
+type = "webpack"
+account_id = "ccfcce0276f46d1981f434cae35aaa47"
+workers_dev = false
+
+[env.dev]
+name = "unblurify-dev"
+zone_id = "dd542f510414ee490f64507604a49613"
+route = "dev.unblurify.com/*"
+
+[env.prod]
+name = "unblurify-prod"
+zone_id = "dd542f510414ee490f64507604a49613"
+route = "unblurify.com/*"
+
+[site]
+bucket = "./build"
