@@ -22,6 +22,9 @@ jobs:
       - name: Install Cloudflare worker packages
         run: npm install
         working-directory: ./workers-site
+
+      - name: Configure
+        run: sed -i s\|data-version=\"v1.0.0.0\"\|data-version=\"$(date '+%y.%m.%d').$GITHUB_RUN_NUMBER\"\|g public/index.html
   
       - name: Build
         run: yarn build
