@@ -1,0 +1,36 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone
+        uses: actions/checkout@v2
+        
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
+        
+      - name: Build
+        run: yarn build
+  
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@1.2.0
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          environment: 'dev'
+  
+      - name: Deploy to Cloudflare
+        uses: cloudflare/wrangler-action@1.2.0
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/prod'
+        with:
+          apiToken: ${{ secrets.CF_API_TOKEN }}
+          environment: 'prod'
