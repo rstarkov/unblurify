@@ -16,8 +16,12 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
         
-      - name: Install packages
+      - name: Install main packages
         run: yarn
+  
+      - name: Install Cloudflare worker packages
+        run: npm install
+        working-directory: ./workers-site
   
       - name: Build
         run: yarn build
