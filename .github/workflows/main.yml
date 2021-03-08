@@ -18,19 +18,22 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
         
+      - name: Install packages
+        run: yarn
+  
       - name: Build
         run: yarn build
   
-      - name: Deploy to Cloudflare
+      - name: Deploy to Cloudflare (dev)
         uses: cloudflare/wrangler-action@1.2.0
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+        if: ${{ success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/dev' }}
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: 'dev'
   
-      - name: Deploy to Cloudflare
+      - name: Deploy to Cloudflare (prod)
         uses: cloudflare/wrangler-action@1.2.0
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/prod'
+        if: ${{ success() && github.event_name != 'pull_request' && github.ref == 'refs/heads/prod' }}
         with:
           apiToken: ${{ secrets.CF_API_TOKEN }}
           environment: 'prod'
